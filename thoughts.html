@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Niedbala</title>
+
+    <!-- Favicon for most browsers -->
+    <link rel="icon" type="image/png" sizes="32x32" href="resources\images\IMG_7462.png">
+    
+    <!-- Optional: Apple Touch Icon for iOS and other high-resolution devices -->
+    <!--<link rel="apple-touch-icon" sizes="180x180" href="path/to/your/apple-touch-icon.png"> -->
+
+    <!-- Optional: Favicon for IE (legacy) -->
+    <!--<link rel="shortcut icon" href="path/to/your/favicon.ico"> -->
+
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+1:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="resources\css\style.css">
+    
+</head>
+
+<body>
+    <header id="headerLinks">
+        <a href="index.html" class="logo">
+          <img src="resources\images\IMG_7462.png" alt="Home">
+        </a>
+        <nav class="center desktop">
+            <a href="about.html" class="center desktop links">About</a>
+            <a href="links.html" class="center desktop links">Links</a>
+            <a href="thoughts.html" class="center desktop links">Thoughts</a>
+            <a href="books.html" class="center desktop links">Books</a>
+            <a href="food.html" class="center desktop links">Food</a>
+
+        </nav>
+        <nav class="right">
+            <a href="" class="desktop"></a>
+            <a href="" class="desktop"></a>
+            <a href="" id="menuBtn"> &#9776;</a>
+        </nav>
+    </header>
+
+
+    <div class="backdrop"></div>
+
+
+    <aside>
+        <button class="close">&times;</button>
+        <div class="asidelinksclose">
+        <a href="about.html">About</a>
+        <a href="links.html">Links</a>
+        <a href="realestate.html">Real Estate</a>
+        <a href="books.html">Books</a>
+        <a href="food.html">Food</a>
+        <a href=""></a>
+        <a href=""></a>
+        <a href="https://www.x.com/">Twitter</a>
+        <a href="https://www.linkedin.com/">Linkedin</a>
+        </div>
+        
+    </aside>
+
+
+    <section id="thoughtssection" class="content-section">
+        <div class="thoughts-container">
+            <div class="thought-entry">
+                <h2 class="thought-title">The Beginning of Time</h2>
+                <p class="thought-summary">A brief exploration of how time began and why it matters to our understanding of the universe.</p>
+                <div class="thought-footer">
+                    <div class="audio-control">
+                        <button class="play-button" aria-label="Play">
+                            <svg viewBox="0 0 24 24" width="24" height="24">
+                                <path fill="currentColor" d="M8 5v14l11-7z"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <span class="thought-date">March 15, 2024</span>
+                </div>
+            </div>
+
+            <div class="thought-entry">
+                <h2 class="thought-title">hello world</h2>
+                <p class="thought-summary">Summary goes here</p>
+                <div class="thought-footer">
+                    <div class="audio-control">
+                        <button class="play-button" aria-label="Play">
+                            <svg viewBox="0 0 24 24" width="24" height="24">
+                                <path fill="currentColor" d="M8 5v14l11-7z"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <span class="thought-date">Feb 8, 2025</span>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+
+    <script src="nav.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const playButtons = document.querySelectorAll('.play-button');
+            let currentUtterance = null;
+            let isPlaying = false;
+            const synth = window.speechSynthesis;
+
+            playButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const playIcon = this.querySelector('svg path');
+                    
+                    // If something is currently playing
+                    if (isPlaying) {
+                        synth.pause();
+                        isPlaying = false;
+                        playIcon.setAttribute('d', 'M8 5v14l11-7z'); // Change to play icon
+                        return;
+                    }
+
+                    // If speech is paused
+                    if (synth.paused) {
+                        synth.resume();
+                        isPlaying = true;
+                        playIcon.setAttribute('d', 'M6 19h4V5H6v14zm8-14v14h4V5h-4z'); // Change to pause icon
+                        return;
+                    }
+
+                    // If starting new speech
+                    const summary = this.closest('.thought-entry').querySelector('.thought-summary').textContent;
+                    
+                    // Stop any previous speech
+                    if (currentUtterance) {
+                        synth.cancel();
+                    }
+
+                    // Create and configure new speech utterance
+                    const utterance = new SpeechSynthesisUtterance(summary);
+                    utterance.rate = 1.0;
+                    utterance.pitch = 1.0;
+                    
+                    // Get available voices and set a preferred one
+                    let voices = synth.getVoices();
+                    const preferredVoice = voices.find(voice => 
+                        voice.name.includes('Daniel') || 
+                        voice.name.includes('Google UK English Male') ||
+                        voice.name.includes('en-US')
+                    );
+                    
+                    if (preferredVoice) {
+                        utterance.voice = preferredVoice;
+                    }
+
+                    // Update button state
+                    playIcon.setAttribute('d', 'M6 19h4V5H6v14zm8-14v14h4V5h-4z'); // Change to pause icon
+                    isPlaying = true;
+
+                    // Handle speech ending
+                    utterance.onend = () => {
+                        playIcon.setAttribute('d', 'M8 5v14l11-7z'); // Change back to play icon
+                        isPlaying = false;
+                        currentUtterance = null;
+                    };
+
+                    // Handle speech pausing
+                    utterance.onpause = () => {
+                        playIcon.setAttribute('d', 'M8 5v14l11-7z'); // Change to play icon
+                        isPlaying = false;
+                    };
+
+                    // Handle speech resuming
+                    utterance.onresume = () => {
+                        playIcon.setAttribute('d', 'M6 19h4V5H6v14zm8-14v14h4V5h-4z'); // Change to pause icon
+                        isPlaying = true;
+                    };
+
+                    // Play the speech
+                    currentUtterance = utterance;
+                    synth.speak(utterance);
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>
