@@ -112,6 +112,15 @@ section{
     max-width: 800px;
     padding: 10%; /* Adds spacing inside the section */
     background-color: inherit;
+    padding-top: 80px; /* Add top padding to account for fixed header */
+}
+
+#indexsection {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 100px; /* Extra padding for the index section specifically */
 }
 
 
